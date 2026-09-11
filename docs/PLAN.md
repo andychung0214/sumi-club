@@ -23,7 +23,7 @@
 - [x] M2 牌桌：index.html、styles.css、src/main.js、src/table.js、src/stats.js。規則控制 UI，three.js 繪製有厚度紙牌及洗牌／發牌／出牌動畫；DOM 按鈕控制手牌。驗證桌機與手機截圖、鍵盤操作、提示／過牌／勝負流程、降低動態效果。
 - [x] M3 連線：src/network.js、tests/browser.mjs。邀請每位客人使用獨立 offer/answer，房主固定座位且驗證版本與動作；僅傳送本人手牌。驗證逐位入座、四個瀏覽器頁面真實 WebRTC 完整對局與再開局、錯誤碼、斷線鎖定；權限由純函式測試覆蓋。
 - [x] M4 交付：README.md、TEST-PLAN.md、LICENSE、CONTRIBUTING.md、.gitignore。執行 Node 測試與瀏覽器測試，獨立程式碼審查與修正。證據見 VERIFICATION.md。
-- [ ] M5 Git：在獨立 sumi-club 目錄初始化 feature/sumi-club，僅加入明確列出的專案檔案。推送前顯示 remote、branch、commit。使用者指定 remote 為 https://github.com/andychung0214/sumi-club.git；已確認遠端可存取且沒有現有分支。
+- [x] M5 Git：在獨立 sumi-club 目錄初始化 feature/sumi-club，僅加入明確列出的專案檔案。推送前已顯示 remote、branch、commit。初始提交 00f8ab2 已成功推送至 https://github.com/andychung0214/sumi-club.git 的 feature/sumi-club，並以 git ls-remote 核對遠端提交一致。
 
 ## 驗收與風險
 

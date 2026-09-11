@@ -57,4 +57,6 @@
 
 ## 未驗證範圍
 
+Git 初始提交 `00f8ab2` 已成功推送至指定 remote 的 `feature/sumi-club`，並核對遠端雜湊一致。GitHub Pages 尚未啟用；本紀錄的網站驗證均使用本機靜態來源。
+
 未實測跨 NAT、公司防火牆、不同實體裝置的 WebRTC；未驗證 TURN（本版沒有）。未實機驗證 iOS Safari、Android、NVDA、VoiceOver、200% 字型縮放或聽覺音效品質。未啟用或驗證公開靜態託管。不得由本機測試推論這些條件皆已通過。
