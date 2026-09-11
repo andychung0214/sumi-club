@@ -1002,8 +1002,13 @@ textarea {
   .seat.pos-2 {
     top: 49%;
     right: 2px;
-    flex-direction: row-reverse;
-    text-align: right;
+  }
+  .seat.pos-1,
+  .seat.pos-2 {
+    flex-direction: column;
+    text-align: center;
+    min-width: 54px;
+    gap: 4px;
   }
   .seat strong {
     font-size: 10px;

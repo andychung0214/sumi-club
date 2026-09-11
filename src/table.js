@@ -10,7 +10,7 @@ export class CardTable {
     this.frame = 0;
     try {
       this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      this.renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio, 2), 3));
       container.append(this.renderer.domElement);
       this.scene = new THREE.Scene();
       this.camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
@@ -46,9 +46,10 @@ export class CardTable {
   texture(id) {
     if (this.textures.has(id)) return this.textures.get(id);
     const canvas = document.createElement("canvas");
-    canvas.width = 280;
-    canvas.height = 400;
+    canvas.width = 560;
+    canvas.height = 800;
     const c = canvas.getContext("2d");
+    c.scale(2, 2);
     c.fillStyle = id === -1 ? "#264b3b" : "#f4efdf";
     c.fillRect(0, 0, 280, 400);
     if (id === -1) {
@@ -76,12 +77,12 @@ export class CardTable {
       c.font = "12px Georgia";
       c.fillText("SUMI CLUB", 140, 244);
     } else {
-      c.fillStyle = [0, 2].includes(suit(id)) ? "#ab403e" : "#1a3029";
+      c.fillStyle = [0, 2].includes(suit(id)) ? "#a52b30" : "#14231e";
       const corner = () => {
-        c.font = "bold 51px Georgia";
-        c.fillText(RANKS[rank(id)], 19, 58);
-        c.font = "38px Georgia";
-        c.fillText(SUITS[suit(id)], 20, 99);
+        c.font = "bold 80px Georgia";
+        c.fillText(RANKS[rank(id)], 16, 82);
+        c.font = "bold 58px Georgia";
+        c.fillText(SUITS[suit(id)], 20, 139);
       };
       corner();
       c.save();
@@ -97,13 +98,15 @@ export class CardTable {
     }
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
     this.textures.set(id, texture);
     return texture;
   }
   card(id) {
-    const face = new THREE.MeshStandardMaterial({
+    // 印刷牌面維持固定色彩，立體邊緣仍接受桌面光照。
+    const face = new THREE.MeshBasicMaterial({
       map: this.texture(id),
-      roughness: 0.78,
+      toneMapped: false,
     });
     const back = new THREE.MeshStandardMaterial({
       map: this.texture(-1),
@@ -228,12 +231,16 @@ export class CardTable {
       [4, 0],
     ];
     const [ox, oy] = origins[relativeSeat] || origins[0];
-    const meshes = cards.map((c) => this.card(c));
+    const meshes = cards.map((c) => {
+      const mesh = this.card(c);
+      mesh.scale.setScalar(1.45);
+      return mesh;
+    });
     await this.animate(400, (p) =>
       meshes.forEach((m, i) => {
         const t = 1 - (1 - p) ** 3;
         m.position.set(
-          ox * (1 - t) + (i - (cards.length - 1) / 2) * 0.83 * t,
+          ox * (1 - t) + (i - (cards.length - 1) / 2) * 1.3 * t,
           oy * (1 - t) - 0.15 * t,
           Math.sin(p * Math.PI) * 1.4 + i * 0.035,
         );
