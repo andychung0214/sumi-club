@@ -1,0 +1,11 @@
+node_modules/
+artifacts/
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+.DS_Store
+.worktrees/
+*.log

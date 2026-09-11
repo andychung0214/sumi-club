@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#101e1c" />
+    <meta
+      name="description"
+      content="墨間牌社 Sumi Club：坐下來，打一手好牌。立體大老二，四級電腦對手與好友連線。"
+    />
+    <meta property="og:title" content="墨間牌社 · Sumi Club" />
+    <meta
+      property="og:description"
+      content="一桌四席，一手好牌。立體大老二與好友連線。"
+    />
+    <meta property="og:type" content="website" />
+    <title>墨間牌社 Sumi Club — 大老二</title>
+    <link rel="icon" href="./assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./vendor/d3.min.js" defer></script>
+    <script type="module" src="./src/main.js"></script>
+  </head>
+  <body>
+    <header class="masthead">
+      <a href="./" class="brand" aria-label="墨間牌社首頁"
+        ><span class="brand-mark">♠</span
+        ><span>墨間牌社<small>SUMI CLUB</small></span></a
+      >
+      <div class="edition">THE CARD ROOM <span>大老二 · BIG TWO</span></div>
+      <div class="header-actions">
+        <button id="sound" aria-pressed="false" title="音效">音效 關</button
+        ><button id="rules-open">桌規 <span>↗</span></button>
+      </div>
+    </header>
+    <main class="layout">
+      <aside class="sidebar">
+        <div class="side-intro">
+          <p class="eyebrow">TAKE A SEAT</p>
+          <h1>牌逢知己。<br />好戲，開桌。</h1>
+          <p class="intro-copy">把日常放一邊，<br />留一點時間給這手牌。</p>
+        </div>
+        <div class="mode-tabs" role="group" aria-label="對戰模式">
+          <button class="active" id="cpu-mode" aria-pressed="true">
+            電腦練習</button
+          ><button id="online-mode" aria-pressed="false">好友連線</button>
+        </div>
+        <section id="cpu-settings" class="settings">
+          <label for="cpu-count">同桌對手 <span>OPPONENTS</span></label
+          ><select id="cpu-count">
+            <option value="3">3 位電腦 · 四人桌</option>
+            <option value="2">2 位電腦 · 三人桌</option>
+            <option value="1">1 位電腦 · 雙人桌</option></select
+          ><label for="difficulty">對手程度 <span>DIFFICULTY</span></label>
+          <div
+            class="difficulty-options"
+            id="difficulty"
+            role="group"
+            aria-label="對手程度"
+          >
+            <button data-level="0" aria-pressed="false">入門</button
+            ><button data-level="1" class="active" aria-pressed="true">
+              標準</button
+            ><button data-level="2" aria-pressed="false">進階</button
+            ><button data-level="3" aria-pressed="false">高手</button>
+          </div>
+          <p class="difficulty-note" id="difficulty-note">
+            穩健出牌，適合慢慢找回手感。
+          </p>
+          <button id="start" class="primary start-button">
+            入座開局 <span>↗</span>
+          </button>
+        </section>
+        <section id="online-settings" class="settings" hidden>
+          <p class="network-description">
+            邀請朋友，各自帶一手牌來。<br />2–4 人，交換連線碼即可入座。
+          </p>
+          <button id="room-open" class="primary start-button">
+            開啟連線室 <span>↗</span>
+          </button>
+          <p class="difficulty-note">無自動配對；部分網路可能無法直連。</p>
+        </section>
+        <section class="session">
+          <div class="section-heading">本日牌記 <span>LOCAL RECORD</span></div>
+          <div class="session-values">
+            <div><strong id="played">0</strong><small>已玩局數</small></div>
+            <div><strong id="wins">0</strong><small>勝局</small></div>
+            <div><strong id="win-rate">—</strong><small>勝率</small></div>
+          </div>
+        </section>
+        <div class="side-footer">
+          <span class="tiny-suits">♠ <i>♥</i> ♣ <i>♦</i></span>
+          <p>不必每手都贏，<br />每手都值得好好玩。</p>
+        </div>
+      </aside>
+      <section class="game-room" aria-label="大老二牌桌">
+        <div class="room-top">
+          <div>
+            <span class="status-dot"></span><span id="room-label">練習牌桌</span
+            ><span class="room-number">TABLE 01</span>
+          </div>
+          <button id="log-open" class="text-button">出牌紀錄 ↗</button>
+        </div>
+        <div class="table-area" id="table-area">
+          <div class="felt">
+            <div class="table-stamp">
+              <span>♠</span><strong>SUMI CLUB</strong
+              ><small>GOOD CARDS. GOOD COMPANY.</small>
+            </div>
+          </div>
+          <div id="three-stage" aria-hidden="true"></div>
+          <div id="seats"></div>
+          <div id="table-announcement" class="table-announcement">
+            <span class="eyebrow">YOUR TABLE IS READY</span>
+            <h2>一桌四席，一手好牌。</h2>
+            <p>選好對手，從這裡開始。</p>
+          </div>
+          <div
+            id="played-cards"
+            class="played-cards"
+            aria-label="桌面上的牌"
+          ></div>
+          <div class="table-caption" id="table-caption">
+            ♦ 3 先行 · 先出完手牌者勝
+          </div>
+        </div>
+        <div class="hand-section">
+          <div class="hand-heading">
+            <div>
+              <span class="you-mark">你</span><strong>我的手牌</strong
+              ><span id="hand-count">13 張</span>
+            </div>
+            <button id="sort" class="text-button">依點數排列 ↕</button>
+          </div>
+          <div id="hand" class="hand" aria-label="我的手牌"></div>
+          <div class="action-row">
+            <p id="status" role="status" aria-live="polite">
+              準備好了嗎？入座，開始你的第一局。
+            </p>
+            <div class="play-actions">
+              <button id="hint" disabled>提示 <kbd>H</kbd></button
+              ><button id="pass" disabled>過牌 <kbd>P</kbd></button
+              ><button id="play" class="primary" disabled>
+                出牌 <span id="selection-count">↗</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <footer class="room-footer">
+          <span>3 < 4 < ··· < K < A < 2 <b>／</b> ♦ < ♣ < ♥ < ♠</span
+          ><span>慢慢想，好好出。</span>
+        </footer>
+      </section>
+    </main>
+    <dialog id="rules-dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">HOUSE RULES</p>
+          <h2>墨間桌規</h2>
+        </div>
+        <button data-close aria-label="關閉桌規">✕</button>
+      </div>
+      <p>各地大老二略有不同，這桌這樣玩。</p>
+      <ol class="rules-list">
+        <li>
+          <b>每人 13 張</b>，2–4
+          人都可開桌。未發出的牌不使用，已發出的最小牌先行，首手必須包含它。
+        </li>
+        <li><b>3 最小、2 最大</b>；相同點數比較 ♦ < ♣ < ♥ < ♠。</li>
+        <li>
+          可出<b>單張、對子、三條</b>，或五張：<br />順子 < 同花 < 葫蘆 <
+          鐵支帶一 < 同花順。
+        </li>
+        <li>
+          順子從 34567 至 10JQKA；<b>2 不入順</b
+          >。同花先比花色，再比點數。葫蘆比三條；鐵支比四條。
+        </li>
+        <li>
+          必須用<b>相同張數、更大的牌</b>壓過前手；沒有跨張數炸彈。其他人全過，最後出牌者重新自由領出。
+        </li>
+        <li>
+          <b>先清空手牌就獲勝</b>。點選牌再按出牌；H 提示、P 過牌、Enter
+          出牌，Esc 取消選牌。
+        </li>
+      </ol>
+      <p class="dialog-note">
+        提示不會自動出牌。電腦只根據自己的手牌與公開資訊決策。
+      </p>
+    </dialog>
+    <dialog id="log-dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">AT THE TABLE</p>
+          <h2>這一局的牌路</h2>
+        </div>
+        <button data-close aria-label="關閉出牌紀錄">✕</button>
+      </div>
+      <div id="distribution" aria-label="手牌點數分布"></div>
+      <ol id="history" class="history"></ol>
+    </dialog>
+    <dialog id="result-dialog">
+      <div class="dialog-header">
+        <span class="eyebrow">A HAND WELL PLAYED</span
+        ><button data-close aria-label="關閉結果">✕</button>
+      </div>
+      <div class="result-suit">♠</div>
+      <h2 id="result-title">好牌，好局。</h2>
+      <p id="result-copy"></p>
+      <div id="result-scores"></div>
+      <button id="again" class="primary start-button">再開一局 ↗</button>
+    </dialog>
+    <dialog id="room-dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">BRING YOUR FRIENDS</p>
+          <h2>好友連線室</h2>
+        </div>
+        <button data-close aria-label="關閉連線室">✕</button>
+      </div>
+      <p>
+        房主為每位朋友產生一份邀請碼；朋友貼入後回傳回覆碼，房主再完成連線。
+      </p>
+      <div class="connection-buttons">
+        <button id="host-room" class="primary">我是房主</button
+        ><button id="join-room">我要加入</button
+        ><button id="leave-room">離開連線</button>
+      </div>
+      <p id="network-status" role="status" aria-live="polite">尚未建立連線</p>
+      <div id="host-controls" hidden>
+        <button id="invite">產生下一位邀請碼</button
+        ><button id="cancel-invite">取消這份邀請</button
+        ><button id="online-start" class="primary" disabled>
+          全員入座，開局
+        </button>
+      </div>
+      <div class="code-fields">
+        <label for="code-in">貼入收到的連線碼</label
+        ><textarea
+          id="code-in"
+          rows="3"
+          spellcheck="false"
+          placeholder="貼入邀請碼或回覆碼"
+        ></textarea
+        ><button id="apply-code">套用連線碼</button
+        ><label for="code-out">傳給朋友的連線碼</label
+        ><textarea
+          id="code-out"
+          rows="3"
+          readonly
+          aria-label="傳給朋友的連線碼"
+        ></textarea
+        ><button id="copy-code">複製連線碼</button>
+      </div>
+      <p class="dialog-note">
+        請在 HTTPS 或 localhost
+        使用。連線碼含網路位址資訊，只交給要同玩的朋友。使用 Google STUN
+        協助直連，沒有 TURN 中繼；連不上可重建邀請或改用同一個
+        Wi-Fi。房主離線會結束對局。
+      </p>
+    </dialog>
+    <noscript>請啟用 JavaScript 以遊玩墨間牌社。</noscript>
+  </body>
+</html>
